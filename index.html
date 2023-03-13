@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Edit</title>
@@ -27,14 +27,15 @@
         </div>
     </div>    
     
-    <div id="right" class="right">
+    <div id="right" class="right" tabindex="-1">
         <div id="filebar" class="filebar">
             <div id="currentfile" class="currentfile"><b>snek.css</b></div>
             <div id="timer" class="timer">The file was last saved: X time ago</div>
             <div id="icons" class="icons">New Save Delete</div>
         </div>
         <div id="file" class="file">
-            <div id="counter" class="counter">1
+            <div id="counter" class="counter">
+                <div class="number">1</div>
                  2
                  3
                  4
@@ -72,13 +73,14 @@
                 11111
                 111111
             </div>
-            <div id="filecontent" class="filecontent">.foregroundCanvas {
-                position: absolute;
-                border: black 1px solid;
-                box-shadow: 5px 5px 10px #cdcdcd;
-                padding: 5px;
-                z-index: 1;
-            }
+            <div id="filecontent" class="filecontent" contenteditable="true" role="textbox" tabindex="-1">
+                <div class="contentline" tabindex="1">.foregroundCanvas {    </div>
+                <div class="contentline">position: absolute;    </div>
+                <div class="contentline">border: black 1px solid;    </div>
+                <div class="contentline">box-shadow: 5px 5px 10px #cdcdcd;    </div>
+                <div class="contentline">padding: 5px;    </div>
+                <div class="contentline">z-index: 1;    </div>
+                <div class="contentline">}    </div>
 
             .backgroundCanvas{
                 position: absolute;

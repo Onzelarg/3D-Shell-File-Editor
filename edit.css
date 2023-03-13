@@ -2,10 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap');
 
+/*BAEBFF A79AB2 B57BA6 415A77 79CD7F */
 
 body{
     margin: 0;     
-    background: linear-gradient(#ECECEC,#DBDBDB);
+    background: #415A77;
     overflow: hidden;
 }
 
@@ -26,17 +27,19 @@ body{
 .content{
     overflow: hidden;
     display: flex;
+    justify-content: center;
 }
 
 .left{
     border: #7B7B7B 1px solid;
+    border-radius: 10px 10px 0 0;
     box-shadow: 0 0 16px 2px rgb(0 0 0 / 40%);
     height: 94vh;
     width: 20vh;
     overflow: auto;
     margin: 20px 0 0 20px;
     padding: 5px 5px 5px 15px;
-    background: linear-gradient(#9AFEE6,#4BE8FE);
+    background: linear-gradient(#8fd694,#4CBD54);
     font-size: 18pt;
     font-family: 'Montserrat', sans-serif;
     
@@ -63,13 +66,14 @@ body{
 
 .right{
     border: #7B7B7B 1px solid;
+    border-radius: 10px 10px 0 0;
     box-shadow: 0 0 16px 2px rgb(0 0 0 / 40%);
     height: 94vh;
-    width: 100%;
+    width: 70vh;
     overflow: auto;
     margin: 20px 0 0 20px;
     padding: 5px 5px 5px 15px;
-    background: linear-gradient(#9AFEE6,#4BE8FE);
+    background: linear-gradient(#8fd694,#4CBD54);
     font-size: 18pt;
     font-family: 'Montserrat', sans-serif;
 }
@@ -106,10 +110,24 @@ body{
     border-right: #7B7B7B 1px solid;
 }
 
+.number{
+    display: inline;
+}
+
 .filecontent{
     padding: 10px 0 0 5px;
     white-space: pre-line;
     margin-left: 5px;
+    user-select: none;
+    tab-size: 4;
+}
+.filecontent:focus{
+    outline: none;
+}
+
+.contentline{
+    display: inline-block;
+    width: 63vh;
 }
 
 .footer{
@@ -120,5 +138,5 @@ body{
     width: 100%;
     font-family: 'Quicksand', sans-serif;
     font-size: 8pt;
-    background-color: #D1D1D1;
+    background-color: #A79AB2;
 }
