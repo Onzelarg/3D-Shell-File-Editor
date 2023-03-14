@@ -1,3 +1,4 @@
+<?php require('edit.php'); ?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -16,13 +17,11 @@
         <div id="filepath" class="filepath">\game\snek</div>
         <div id="fileselect" class="fileselect">
             <div id="navigator" class="navigator">
-                .\
-                ..\
+                .
+                ..
             </div>
             <div id="filelist" class="filelist">
-                index.html
-                snek.css
-                snek.js
+                <?php getFolderContents("game/snek"); ?>
             </div>
         </div>
     </div>    
@@ -35,13 +34,13 @@
         </div>
         <div id="file" class="file">
             <div id="counter" class="counter">
-                <div class="number">1</div>
-                 2
-                 3
-                 4
-                 5
-                 6
-                 7
+                <div class="number" id="number1">1</div>
+                <div class="number" id="number2">2</div>
+                <div class="number" id="number3">3</div>
+                <div class="number" id="number4">4</div>
+                <div class="number" id="number5">5</div>
+                <div class="number" id="number6">6</div>
+                <div class="number" id="number7">7</div>
                  8
                  9
                  10
@@ -73,14 +72,15 @@
                 11111
                 111111
             </div>
-            <div id="filecontent" class="filecontent" contenteditable="true" role="textbox" tabindex="-1">
-                <div class="contentline" tabindex="1">.foregroundCanvas {    </div>
-                <div class="contentline">position: absolute;    </div>
-                <div class="contentline">border: black 1px solid;    </div>
-                <div class="contentline">box-shadow: 5px 5px 10px #cdcdcd;    </div>
-                <div class="contentline">padding: 5px;    </div>
-                <div class="contentline">z-index: 1;    </div>
-                <div class="contentline">}    </div>
+            <div id="filecontent" class="filecontent" contenteditable="true" role="textbox">
+<?php openFile("snek.css"); ?>
+<!-- <div class="contentline" id="line1">.foregroundCanvas {</div>
+<div class="contentline" id="line2">    position: absolute;</div>
+<div class="contentline" id="line3">    border: black 1px solid;</div>
+<div class="contentline" id="line4">    box-shadow: 5px 5px 10px #cdcdcd;</div>
+<div class="contentline" id="line5">    padding: 5px;</div>
+<div class="contentline" id="line6">    z-index: 1;</div>
+<div class="contentline" id="line7">}</div>
 
             .backgroundCanvas{
                 position: absolute;
@@ -106,7 +106,7 @@
             .timer{
                 position: absolute;
                 float: left;
-            }
+            } --> 
             </div>
         </div>
     

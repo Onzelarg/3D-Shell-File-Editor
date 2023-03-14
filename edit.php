@@ -1,55 +1,29 @@
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$operation=$_POST["op"];
-	
-	if($_POST["filename"]){$file_name=$_POST["filename"];}else{$file_name="new.txt";}
-	
-	
-	$k=0;
-	if($operation=="read"){
-		$myfile = fopen($file_name, "r+") or die("Unable to open file!");
-		while(! feof($myfile)) {
-			echo $k++."<br>";
-			$line= fgets($myfile);
-			$txt .= $line;
+require('path.php');
+
+$dir="";
+
+function getFolderContents($path){
+	$dir=$GLOBALS["root"].$path;
+	$GLOBALS["dir"]=$dir."/";
+	$files=scandir($dir);
+	for ($i=0; $i < count($files); $i++) { 
+		if($files[$i]!="." && $files[$i]!=".." && $files[$i]!=".DS_Store"){
+			print $files[$i]."<br>";
 		}
 	}
-	if($operation=="write"){
-		$myfile = fopen($file_name, "w") or die("Unable to open file!");
-		$txt = $_POST["text"];
-		file_put_contents($file_name,$txt);
-	}
-	fclose($myfile);
 }
 
+function openFile($filename){
+	$myfile = fopen($GLOBALS["dir"].$filename, "r+") or die("Unable to open file!");
+	$output="";
+	$linestart='<div class="contentline" id="line';
+	$lineend='</div>';
+	$linenumber=1;
+	while(! feof($myfile)) {
+		$line= $linestart.$linenumber++.'">'.fgets($myfile).$lineend."<br>";
+		$output .= $line;
+	}
+	print $output;
+}
 ?>
-
-<!doctype html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Untitled Document</title>
-</head>
-
-<body>
-<div id="deb">
-  <form action="index.php" method="post">
-	File operations:
-		<input type="radio" id="read" name="op" value="read"><label for="read">Read</label>
-		<input type="radio" id="write" name="op" value="write"><label for="write">Write</label>
-		<input type="text" name="filename"><label for="filename">File Name</label></br>
-	<textarea name="text" id="textarea" style="width: 300px;height: 300px;"><?php print $txt;?></textarea>
-	</br><input name="sub" type="submit" value="OK" >
-</form>
-</div>
-<script type="text/javascript">
-var deb=document.getElementById("deb");
-var sw=screen.width;
-var sh=screen.height;
-var tex=document.getElementById("textarea");
-tex.style.width=(sw*0.7)+"px";
-tex.style.height=(sh*0.7)+"px";
-	
-</script>
-</body>
-</html>
