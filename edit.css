@@ -5,6 +5,7 @@
 
 :root{
     --fontsize: 16pt;
+    --marginbottom: 6px;
 }
 
 
@@ -71,12 +72,12 @@ body{
 
 
 .right{
+    position: sticky;
     border: #7B7B7B 1px solid;
     border-radius: 10px 10px 0 0;
     box-shadow: 0 0 16px 2px rgb(0 0 0 / 40%);
     height: 94vh;
     width: 70vh;
-    overflow: auto;
     margin: 20px 0 0 20px;
     padding: 5px 5px 5px 15px;
     background: linear-gradient(#8fd694,#4CBD54);
@@ -106,36 +107,39 @@ body{
 
 .file{
     display: flex;
+    height: 89.5vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .counter{
-    white-space:pre-line;
+    height: 100%;
     text-align: end;
     width: 45px;
     padding: 10px 10px 0 5px;
     border-right: #7B7B7B 1px solid;
+    font-size: var(--fontsize);
 }
 
 .number{
-    display: inline;
-    font-size: var(--fontsize);
+    margin-bottom: var(--marginbottom);
 }
 
 .filecontent{
     padding: 10px 0 0 5px;
-    white-space: pre;
     margin-left: 5px;
     user-select: none;
     tab-size: 8;
+    white-space: break-spaces;
+    font-size: var(--fontsize);
 }
 .filecontent:focus{
     outline: none;
 }
 
 .contentline{
-    display: inline-block;
     width: 63vh;
-    font-size: var(--fontsize);
+    margin-bottom: var(--marginbottom);
 }
 
 .footer{
