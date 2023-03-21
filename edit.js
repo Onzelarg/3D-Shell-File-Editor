@@ -57,29 +57,30 @@ async function fetch_call(operation,argument) {
 
 function writeContent(file){
 	file=file.split("\n");
+	console.log(file);
 	counterDIV.innerHTML="";
 	filecontentDIV.innerHTML="";
 	for (let i = 1; i < file.length+1; i++) {
 		let innerHTML='<div class="number" id="number'+i+'">'+i+"</div>";
 		counterDIV.innerHTML+=innerHTML;
 		innerHTML='<div class="contentline" id="line'+i+'">';
-		if (file[i-1]=="") {
-			innerHTML+="&nbsp;";
-		}else{
-			innerHTML+=file[i-1].replace(/<[^>]*>/g, '');
-		}
 		innerHTML+='</div>';
 		filecontentDIV.innerHTML+=innerHTML;
 	}
-	counterDIV.style.height=filecontentDIV.scrollHeight+"px";
-	setTimeout(changeHeight,500);
+	setTimeout(changeHeight(file),500);
 }
-function changeHeight(){
+function changeHeight(file){
 	let fileDiv=document.querySelectorAll(".contentline");
 	let numberDiv=document.querySelectorAll(".number");
 	for (let i = 0; i < fileDiv.length; i++) {
+		if (file[i].length==0) {
+			fileDiv[i].innerHTML="&nbsp;";
+		}else{
+			fileDiv[i].innerText=file[i];
+		}
 		numberDiv[i].style.height=fileDiv[i].scrollHeight+"px";
 	}
+	counterDIV.style.height=filecontentDIV.scrollHeight+"px";
 }
 
 function writeFolder(file){
