@@ -14,27 +14,29 @@
     
 <div id="content" class="content">
     <div id="left" class="left">
-        <div id="filepath" class="filepath">\game\snek</div>
+        <div id="filepath" class="filepath"><?php if($folder!=""){print $_COOKIE["openedFolder"];}else{print "/";} ?></div>
         <div id="fileselect" class="fileselect">
             <div id="navigator" class="navigator">
-                .
-                ..
+                <div id="root" class="uproot">.</div>
+                <div id="up" class="uproot">..</div>
             </div>
             <div id="filelist" class="filelist">
-                <?php getFolderContents("game/snek"); ?>
+                
             </div>
         </div>
     </div>    
     
     <div id="right" class="right" tabindex="-1">
         <div id="filebar" class="filebar">
-            <div id="currentfile" class="currentfile"><b>snek.css</b></div>
-            <div id="timer" class="timer">The file was last saved: X time ago</div>
-            <div id="icons" class="icons">New Save Delete</div>
+            <div id="currentfile" class="currentfile">No file opened</div>
+            <div id="fileoperations" class="fileoperations">
+                <div id="timer" class="timer">The file was last saved: X time ago</div>
+                <div id="icons" class="icons">New Save Delete</div>
+            </div>
         </div>
         <div id="file" class="file">
             <div id="counter" class="counter"></div>
-            <div id="filecontent" class="filecontent" contenteditable="true" role="textbox" spellcheck="false"></div>
+            <div id="filecontent" class="filecontent" contenteditable="true" role="textbox" spellcheck="false">No open file</div>
         </div>
     </div> 
 </div>

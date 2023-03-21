@@ -1,62 +1,38 @@
 <?php
 require('path.php');
 
-$dir="";
+if(!isset($_COOKIE["openedFolder"])) {
+	setcookie("openedFolder", "/", time() + (86400 * 10), "/"); // 86400 = 1 day
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") { 
 	if($_POST['to_run']!=""){
-		call_user_func($_POST['to_run']);
+		if($_POST['to_run']=="getFolderContents") getFolderContents($_POST['argument']);
+		if($_POST['to_run']=="read") read();
 	}
 }
 
 function getFolderContents($path){
-	$dir=$GLOBALS["root"].$path;
-	$GLOBALS["dir"]=$dir."/";
-	$files=scandir($dir);
+	setcookie("openedFolder", $path, time() + (86400 * 10), "/");
+	$path=$GLOBALS['root'].$path;
+	$files=scandir($path);
 	for ($i=0; $i < count($files); $i++) { 
 		if($files[$i]!="." && $files[$i]!=".." && $files[$i]!=".DS_Store"){
-			print $files[$i]."<br>";
+			print htmlspecialchars($files[$i])."\n";
 		}
 	}
 }
- 
-function openFile($filename){
-	// $myfile = fopen($GLOBALS["dir"].$filename, "r+") or die("Unable to open file!");
-	$myfile = fopen($filename, "r+") or die("Unable to open file!");
-	$output="";
-	$linestart='<div class="contentline" id="line';
-	$lineend='</div>';
-	$linenumber=1;
-	while(! feof($myfile)) {
-		$line= $linestart.$linenumber++.'">'.fgets($myfile).$lineend."<br>";
-		$output .= $line;
-	}
-	print $output;
-}
 
 function read(){ 
-	if(!$_POST["filename"]){throw new Exception("Filename not received!");} 
-	//print $GLOBALS["dir"].$_POST["filename"];
-	$file = fopen($_POST["filename"], "r+") or die("Unable to open file!"); 
+	if(!$_POST["argument"]){throw new Exception("Filename not received!");} 
+	$fileName=$GLOBALS["root"].$_COOKIE["openedFolder"].$_POST["argument"];
+	$file = fopen($fileName, "r+") or die("Unable to open file!"); 
 	$txt="";
 	while(! feof($file)) {
 		$txt.=fgets($file);
 	}
 	fclose($file); 
 	print $txt;
-}
-
-function openFileTest($filename){
-	$myfile = fopen($GLOBALS["dir"].$filename, "r+") or die("Unable to open file!");
-	$output="";
-	$linestart='<div class="contentline" id="line';
-	$lineend='</div>';
-	$linenumber=1;
-	while(! feof($myfile)) {
-		$line= $linestart.$linenumber++.'">'.fgets($myfile).$lineend."<br>";
-		$output .= $line;
-	}
-	print $output;
 }
 
 

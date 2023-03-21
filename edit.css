@@ -52,24 +52,35 @@ body{
     
 }
 
-/* .filepath{
-    
+ .filepath{
+    width: 20vh;
+    line-break: anywhere;
 }
 
+/*
 .fileselect{
     
 } */
 
 .navigator{
-    width: min-content;
+    width: 20vh;
     margin-bottom: 20px;
 }
 
-.filelist{
-    width: min-content;   
+.uproot:hover{
+    background-color: #415A7770;
+    user-select: none;
 }
 
+.filelist{
+    width: 20vh;
+    line-break: anywhere;   
+}
 
+.folder:hover{
+    background-color: #415A7770;
+    user-select: none;
+}
 
 .right{
     position: sticky;
@@ -140,6 +151,9 @@ body{
 .contentline{
     width: 63vh;
     margin-bottom: var(--marginbottom);
+}
+.contentline:hover{
+    background-color: #415A7770;
 }
 
 .footer{
