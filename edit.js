@@ -23,9 +23,11 @@ var rootDiv=document.getElementById("root");
 var upDiv=document.getElementById("up");
 var timerUpdateTick=15000; //15s
 var timerStart=0;
+var timerInterval;
 var fileListDiv=[];
+var numberDiv=[];
+var fileDiv=[];
 var filecontent;
-var lineLength=71;
 
 window.onload = () => {
 	fetch_call("getFolderContents",filePath);
@@ -55,50 +57,60 @@ async function fetch_call(operation,argument) {
 		})
 }
 
+
 function writeContent(file){
 	file=file.split("\n");
-	console.log(file);
 	counterDIV.innerHTML="";
 	filecontentDIV.innerHTML="";
+	fileDiv=[]; numberDiv=[];
 	for (let i = 1; i < file.length+1; i++) {
-		let innerHTML='<div class="number" id="number'+i+'">'+i+"</div>";
-		counterDIV.innerHTML+=innerHTML;
-		innerHTML='<div class="contentline" id="line'+i+'">';
-		innerHTML+='</div>';
-		filecontentDIV.innerHTML+=innerHTML;
-	}
-	setTimeout(changeHeight(file),500);
-}
-function changeHeight(file){
-	let fileDiv=document.querySelectorAll(".contentline");
-	let numberDiv=document.querySelectorAll(".number");
-	for (let i = 0; i < fileDiv.length; i++) {
-		if (file[i].length==0) {
-			fileDiv[i].innerHTML="&nbsp;";
+		numberDiv.push(new eDiv("number"+i,counterDIV.id,i,"number"));
+		fileDiv.push(new eDiv("line"+i,filecontentDIV.id,"","contentline"));
+		if (file[i-1].length==0) {
+			fileDiv[i-1].innerhtml("&nbsp;");
 		}else{
-			fileDiv[i].innerText=file[i];
+			let line=replaceHTML(file[i-1]);
+			fileDiv[i-1].innerhtml(line);
 		}
-		numberDiv[i].style.height=fileDiv[i].scrollHeight+"px";
+		numberDiv[i-1].add_style("height",fileDiv[i-1].element.scrollHeight+"px");
+	}
+	let emptyLines=10+file.length;
+	for (let i = file.length+1; i < emptyLines; i++) {
+		numberDiv.push(new eDiv("number"+i,counterDIV.id,i,"number"));
+		fileDiv.push(new eDiv("line"+i,filecontentDIV.id,"&nbsp;","contentline"));
 	}
 	counterDIV.style.height=filecontentDIV.scrollHeight+"px";
 }
 
+function replaceHTML(str){
+	let output=str;
+	//output=output.replace("","");
+	output=output.replace("&","&amp;");
+	output=output.replace("'","&apos;");
+	output=output.replace('"',"&quot;");
+	output=output.replace("<html>","&lt;html&gt;");
+	output=output.replace("<body>","&lt;body&gt;");
+	output=output.replace("</html>","&lt;/html&gt;");
+	output=output.replace("</body>","&lt;/body&gt;");
+	output=output.replace("<h1>","&lt;h1&gt;");
+	output=output.replace("</h1>","&lt;/h1&gt;");
+	output=output.replace("</div>","&lt;/div&gt;");
+	output=output.replace("<canvas","&lt;canvas");
+	output=output.replace("</canvas>","&lt;/canvas&gt;");
+	output=output.replace("<","&lt;");
+	output=output.replace(">","&gt;");
+	return output;
+}
+
 function writeFolder(file){
+	clearInterval(timerInterval); timerInterval=null;
 	file=file.split("\n");
 	fileList.innerHTML="";
-	for (let i = 1; i < file.length+1; i++) {
-		let innerHTML='<div class="folder" id="file'+i+'">'+file[i-1];
-		innerHTML+="</div>";
-		fileList.innerHTML+=innerHTML;
-	}
-	setTimeout(addClick,500);
-}
-function addClick(){
-	fileListDiv=document.querySelectorAll(".folder");
-	for (let i = 0; i < fileListDiv.length; i++) {
-		fileListDiv[i].addEventListener("click",fileClick);
-	}
-	console.log("Added click");
+	fileListDiv=[];
+	for (let i = 1; i < file.length; i++) {
+			fileListDiv.push(new eDiv("file"+i,fileList.id,file[i-1],"folder"));
+			fileListDiv[i-1].add_event("click",fileClick);
+		}
 }
 
 function fileClick(){
@@ -112,7 +124,7 @@ function fileClick(){
 				fetch_call("read",fileName);
 				currentFileDiv.innerHTML=fileName;
 				timerStart=Date.now();
-				setInterval(timerUpdate,timerUpdateTick);
+				timerInterval=setInterval(timerUpdate,timerUpdateTick);
 			}
 		}
 	}

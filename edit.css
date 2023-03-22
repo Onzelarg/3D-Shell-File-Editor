@@ -17,6 +17,18 @@ body{
     overflow: hidden;
 }
 
+::-webkit-scrollbar {
+    width: 5px;
+}
+  
+::-webkit-scrollbar-track {
+    background: linear-gradient(#7dbc82,#40a046);
+}
+  
+::-webkit-scrollbar-thumb {
+    background: #348139;
+}
+
 .titlebar{
     letter-spacing: 5px;
     top: 0;
@@ -118,7 +130,7 @@ body{
 
 .file{
     display: flex;
-    height: 89.5vh;
+    height: 88.7vh;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -149,7 +161,7 @@ body{
 }
 
 .contentline{
-    width: 63vh;
+    width: 62vh;
     margin-bottom: var(--marginbottom);
 }
 .contentline:hover{
@@ -157,7 +169,7 @@ body{
 }
 
 .footer{
-    height: 1vh;
+    height: 1.2vh;
     text-align: center;
     position: fixed;
     bottom: 0;
