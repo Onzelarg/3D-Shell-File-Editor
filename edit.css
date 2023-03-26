@@ -109,28 +109,32 @@ body{
 }
 
 .filebar{
-    display: flex;
     padding: 5px;
     border-bottom: #7B7B7B 1px solid;
 }
 
 .currentfile{
     font-size: 24pt;
+    overflow: hidden;
 }
 
 .timer{
+    display: inline;
     font-size: 8pt;
-    align-self: flex-end;
 }
 
 .icons{
+    display: flex;
     float: right;
-    align-self: flex-end;
+}
+
+.icon{
+    margin: 0 2px 0 2px;
 }
 
 .file{
     display: flex;
-    height: 88.7vh;
+    height: 86.4vh;
     overflow-y: auto;
     overflow-x: hidden;
 }

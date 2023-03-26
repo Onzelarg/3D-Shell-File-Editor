@@ -14,7 +14,7 @@
     
 <div id="content" class="content">
     <div id="left" class="left">
-        <div id="filepath" class="filepath"><?php if($folder!=""){print $_COOKIE["openedFolder"];}else{print "/";} ?></div>
+        <div id="filepath" class="filepath"><?php print $_COOKIE["openedFolder"]; ?></div>
         <div id="fileselect" class="fileselect">
             <div id="navigator" class="navigator">
                 <div id="root" class="uproot">.</div>
@@ -28,11 +28,13 @@
     
     <div id="right" class="right" tabindex="-1">
         <div id="filebar" class="filebar">
-            <div id="currentfile" class="currentfile">No file opened</div>
-            <div id="fileoperations" class="fileoperations">
-                <div id="timer" class="timer">The file was last saved: X time ago</div>
-                <div id="icons" class="icons">New Save Delete</div>
-            </div>
+            <div id="timer" class="timer">&nbsp;</div>
+                <div id="icons" class="icons">
+                    <div id="new" class="icon"><img src="img/new.png" width="20px" height="20px"></div>
+                    <div id="save" class="icon"><img src="img/save.png" width="20px" height="20px"></div>
+                    <div id="delete" class="icon"><img src="img/delete.png" width="20px" height="20px"></div>
+                </div>
+            <div id="currentfile" class="currentfile"><?php if(isset($_COOKIE["openedFile"])==1) { print $_COOKIE["openedFile"];}else{ print "#$#";} ?></div>     
         </div>
         <div id="file" class="file">
             <div id="counter" class="counter"></div>
