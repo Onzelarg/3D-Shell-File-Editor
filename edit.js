@@ -238,7 +238,9 @@ function upFolder(){
  */
 function save(){
 	clearInterval(timerInterval); timerInterval=null;
-	fetch_call("writeFile",filecontentDIV.innerText);
+	filecontentDIV.innerHTML=filecontentDIV.innerHTML.replaceAll("&nbsp;","");
+	let saveContent=filecontentDIV.innerText.replaceAll("+","%2B");
+	fetch_call("writeFile",saveContent);
 }
 
 function editing(){
