@@ -8,6 +8,7 @@ const types = [
 	"css",
 	"cpp",
 	"cs",
+	"old",
 ];
 // ********************************************************************************************************
 
@@ -33,11 +34,19 @@ var fileDiv=[];
 var filecontent;
 var addedEmptylines=10;
 
+var selectedLine=-1;
+var multiKey="";
+
 window.onload = () => {
 	fetch_call("getFolderContents",filePath);
 	rootDiv.addEventListener("click",openRoot);
 	upDiv.addEventListener("click",upFolder);
 	saveDiv.addEventListener("click",save);
+
+	filecontentDIV.addEventListener("keydown",keyPress);
+	filecontentDIV.addEventListener("keyup",keyUp);
+	filecontentDIV.addEventListener("input",input);
+
 	if (currentFileDiv.innerHTML=="#$#") {
 		currentFileDiv.innerHTML="No file opened";
 	}else{
@@ -70,6 +79,7 @@ async function fetch_call(operation,argument) {
 			filecontent=text;
 			if (operation=="read")writeContent(filecontent);
 			if (operation=="getFolderContents")writeFolder(filecontent);
+			if (operation=="writeFile") log(filecontent);
 		})
 }
 
@@ -89,8 +99,7 @@ function writeContent(file){
 			fileDiv[i-1].innerhtml("&nbsp;");
 			empties++;
 		}else{
-			let line=replaceHTML(file[i-1]);
-			fileDiv[i-1].innerhtml(line);
+			fileDiv[i-1].innertext(file[i-1]);
 			empties=0;
 		}
 		fileDiv[i-1].add_event("click",editing);
@@ -105,31 +114,6 @@ function writeContent(file){
 		}
 	}
 	counterDIV.style.height=filecontentDIV.scrollHeight+"px";
-}
-
-/**
- * Converts a html string to plain text
- * @param {string} str - The input to be changed
- * @returns Changed text
- */
-function replaceHTML(str){
-	let output=str;
-	//output=output.replace("","");
-	output=output.replace("&","&amp;");
-	output=output.replace("'","&apos;");
-	output=output.replace('"',"&quot;");
-	output=output.replace("<html>","&lt;html&gt;");
-	output=output.replace("<body>","&lt;body&gt;");
-	output=output.replace("</html>","&lt;/html&gt;");
-	output=output.replace("</body>","&lt;/body&gt;");
-	output=output.replace("<h1>","&lt;h1&gt;");
-	output=output.replace("</h1>","&lt;/h1&gt;");
-	output=output.replace("</div>","&lt;/div&gt;");
-	output=output.replace("<canvas","&lt;canvas");
-	output=output.replace("</canvas>","&lt;/canvas&gt;");
-	output=output.replace("<","&lt;");
-	output=output.replace(">","&gt;");
-	return output;
 }
 
 /**
@@ -207,7 +191,7 @@ function timerUpdate(){
 	innerHTML+=seconds+" seconds ago";
 	timerDiv.innerHTML=innerHTML;
 }
-
+ 
 /**
  * Opens the root folder of the server
  */
@@ -238,8 +222,24 @@ function upFolder(){
  */
 function save(){
 	clearInterval(timerInterval); timerInterval=null;
-	filecontentDIV.innerHTML=filecontentDIV.innerHTML.replaceAll("&nbsp;","");
-	let saveContent=filecontentDIV.innerText.replaceAll("+","%2B");
+	let empties;
+	for (let i = 0; i < fileDiv.length; i++) {
+		let line=fileDiv[i].element;
+		if (line.innerHTML=="&nbsp;") {
+			empties++;
+		}else{
+			empties=0;
+		}
+		line.innerHTML=line.innerHTML.replaceAll("&nbsp;","<br>");
+	}
+	if (empties>5) {
+		empties-=5;
+		for (let i = 0; i < empties; i++) {
+			fileDiv[fileDiv.length-empties+i].delete_element();
+		}
+	}
+	let saveContent=filecontentDIV.innerText;
+	saveContent=saveContent.replaceAll("&nbsp;","%2B");
 	fetch_call("writeFile",saveContent);
 }
 
@@ -248,6 +248,43 @@ function editing(){
 		timerStart=Date.now();
 		timerInterval=setInterval(timerUpdate,timerUpdateTick);
 	}
-	log(this.id);
+	selectedLine=this.id.split("line");
+	selectedLine=selectedLine[1]-1;
 }
 
+function keyPress(e){
+	log(e.key);
+	if (e.key=="Control" || e.key=="Meta") {
+		multiKey=e.key;
+	}
+	if(multiKey=="Meta" && e.key=="z"){
+	}
+
+	if(e.key=="Enter"){
+		e.preventDefault();
+		fileDiv[selectedLine].innerhtml("<br>&nbsp;");
+		changeCounterHeight();
+	}
+
+}
+
+function keyUp(e){
+	if (e.key=="Control" || e.key=="Meta") {
+		multiKey="";
+	}
+}
+
+function changeCounterHeight(){
+	if (fileDiv[selectedLine].element.scrollHeight!=0) {
+		numberDiv[selectedLine].remove_style("height");
+		numberDiv[selectedLine].add_style("height",fileDiv[selectedLine].element.scrollHeight+"px");
+	}else{
+		numberDiv[selectedLine].delete_element();
+		selectedLine--;
+	}
+	
+}
+
+function input(){
+	changeCounterHeight();
+}

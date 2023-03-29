@@ -30,8 +30,11 @@ function getFolderContents($path){
 	$path=$GLOBALS['root'].$path;
 	$files=scandir($path);
 	for ($i=0; $i < count($files); $i++) { 
-		if($files[$i]!="." && $files[$i]!=".." && $files[$i]!=".DS_Store"){
-			print htmlspecialchars($files[$i])."\n";
+		if($files[$i]!="." && $files[$i]!=".." && $files[$i]!=".DS_Store"  && $files[$i]!=".old"  && $files[$i]!="_notes"){
+			$old=explode(".",$files[$i]);
+			if ($old[count($old)-1]!="old") {
+				print htmlspecialchars($files[$i])."\n";
+			}
 		}
 	}
 }
@@ -64,6 +67,7 @@ function writeFile(){
 	file_put_contents($fileName.".old",$oldFile);
 	$content = $_POST["argument"];
 	file_put_contents($fileName,$content);
+	print "Success";
 }
 
 ?>
