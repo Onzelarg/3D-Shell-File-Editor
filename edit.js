@@ -25,6 +25,7 @@ var newDiv=document.getElementById("new");
 var saveDiv=document.getElementById("save");
 var deleteDiv=document.getElementById("delete");
 
+var os="Other";
 var timerUpdateTick=15000; //15s
 var timerStart=0;
 var timerInterval;
@@ -38,6 +39,9 @@ var selectedLine=-1;
 var multiKey="";
 
 window.onload = () => {
+	os=navigator.userAgent.toLowerCase();
+	if(os.includes("mac")) os="Mac";
+	if(os.includes("Win")) os="Win";
 	fetch_call("getFolderContents",filePath);
 	rootDiv.addEventListener("click",openRoot);
 	upDiv.addEventListener("click",upFolder);

@@ -54,7 +54,7 @@ body{
     border-radius: 10px 10px 0 0;
     box-shadow: 0 0 16px 2px rgb(0 0 0 / 40%);
     height: 94vh;
-    width: 20vh;
+    width: 10vw;
     overflow: auto;
     margin: 20px 0 0 20px;
     padding: 5px 5px 5px 15px;
@@ -65,7 +65,7 @@ body{
 }
 
  .filepath{
-    width: 20vh;
+    width: 20vw;
     line-break: anywhere;
 }
 
@@ -75,7 +75,7 @@ body{
 } */
 
 .navigator{
-    width: 20vh;
+    width: 20vw;
     margin-bottom: 20px;
 }
 
@@ -85,7 +85,7 @@ body{
 }
 
 .filelist{
-    width: 20vh;
+    width: 20vw;
     line-break: anywhere;   
 }
 
@@ -100,7 +100,7 @@ body{
     border-radius: 10px 10px 0 0;
     box-shadow: 0 0 16px 2px rgb(0 0 0 / 40%);
     height: 94vh;
-    width: 70vh;
+    width: 40vw;
     margin: 20px 0 0 20px;
     padding: 5px 5px 5px 15px;
     background: linear-gradient(#8fd694,#4CBD54);
@@ -154,6 +154,7 @@ body{
 }
 
 .filecontent{
+    width: 100%;
     padding: 10px 0 0 5px;
     margin-left: 5px;
     user-select: none;
@@ -166,7 +167,7 @@ body{
 }
 
 .contentline{
-    width: 62vh;
+    width: 99%;
     margin-bottom: var(--marginbottom);
 }
 .contentline:hover{
