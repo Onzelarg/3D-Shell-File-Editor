@@ -1,4 +1,11 @@
 // ********************************************************************************************************
+//													Constants
+const timerUpdateTick={ value:15000, } //15s
+const addedEmptylines={ value:10, }
+const changeHeightonResize={ value:false, }
+// ********************************************************************************************************
+
+// ********************************************************************************************************
 //													File Types
 const types = [
 	"txt",
@@ -12,30 +19,44 @@ const types = [
 ];
 // ********************************************************************************************************
 
-var counterDIV=document.getElementById("counter");
-var filecontentDIV=document.getElementById("filecontent");
-var filepathDIV=document.getElementById("filepath");
+class selectedLine{
+	update(line){
+		let id=line.split("line");
+		this.id=id[1]-1;
+		this.div=fileDiv[this.id];
+		this.element=this.div.element;
+		this.innerhtml=this.element.innerHTML;
+		this.innertext=this.element.innerText;
+	}
+
+	updateInner(){
+		this.innerhtml=this.element.innerHTML;
+		this.innertext=this.element.innerText;
+	}
+}
+
+var counterDIV=getElementbyID("counter");
+var filecontentDIV=getElementbyID("filecontent");
+var filepathDIV=getElementbyID("filepath");
 var filePath=filepathDIV.innerHTML;
-var fileList=document.getElementById("filelist");
-var currentFileDiv=document.getElementById("currentfile");
-var timerDiv=document.getElementById("timer");
-var rootDiv=document.getElementById("root");
-var upDiv=document.getElementById("up");
-var newDiv=document.getElementById("new");
-var saveDiv=document.getElementById("save");
-var deleteDiv=document.getElementById("delete");
+var fileList=getElementbyID("filelist");
+var currentFileDiv=getElementbyID("currentfile");
+var timerDiv=getElementbyID("timer");
+var rootDiv=getElementbyID("root");
+var upDiv=getElementbyID("up");
+var newDiv=getElementbyID("new");
+var saveDiv=getElementbyID("save");
+var deleteDiv=getElementbyID("delete");
 
 var os="Other";
-var timerUpdateTick=15000; //15s
 var timerStart=0;
 var timerInterval;
 var fileListDiv=[];
 var numberDiv=[];
 var fileDiv=[];
 var filecontent;
-var addedEmptylines=10;
 
-var selectedLine=-1;
+var sL=new selectedLine();
 var multiKey="";
 
 window.onload = () => {
@@ -50,6 +71,8 @@ window.onload = () => {
 	filecontentDIV.addEventListener("keydown",keyPress);
 	filecontentDIV.addEventListener("keyup",keyUp);
 	filecontentDIV.addEventListener("input",input);
+
+	if(changeHeightonResize.value) window.onresize = changeCounterHeightonResize;
 
 	if (currentFileDiv.innerHTML=="#$#") {
 		currentFileDiv.innerHTML="No file opened";
@@ -110,7 +133,7 @@ function writeContent(file){
 		numberDiv[i-1].add_style("height",fileDiv[i-1].element.scrollHeight+"px");
 	}
 	if (empties<10) {
-		let emptyLines=addedEmptylines+file.length;
+		let emptyLines=addedEmptylines.value+file.length;
 		for (let i = file.length+1; i < emptyLines; i++) {
 			numberDiv.push(new eDiv("number"+i,counterDIV.id,i,"number"));
 			fileDiv.push(new eDiv("line"+i,filecontentDIV.id,"&nbsp;","contentline"));
@@ -250,10 +273,9 @@ function save(){
 function editing(){
 	if (timerInterval==null) {
 		timerStart=Date.now();
-		timerInterval=setInterval(timerUpdate,timerUpdateTick);
+		timerInterval=setInterval(timerUpdate,timerUpdateTick.value);
 	}
-	selectedLine=this.id.split("line");
-	selectedLine=selectedLine[1]-1;
+	sL.update(this.id);
 }
 
 function keyPress(e){
@@ -266,10 +288,32 @@ function keyPress(e){
 
 	if(e.key=="Enter"){
 		e.preventDefault();
-		fileDiv[selectedLine].innerhtml("<br>&nbsp;");
+		sL.div.innerhtml("<br>&nbsp;");
 		changeCounterHeight();
 	}
 
+	if(e.key=="Tab"){
+		e.preventDefault();
+		let range=document.createRange();
+		let selection=window.getSelection();
+		let start=selection.anchorOffset;
+		let end=selection.focusOffset;
+		let innerHTML=sL.innertext.substring(0,start)+"\t"+sL.innertext.substring(end);
+		sL.div.innertext(innerHTML,false);
+		sL.updateInner();
+		log(sL.element.childNodes[0].length);
+		range.setStart(sL.element.childNodes[0],end+1);
+		range.collapse(true);
+		selection.removeAllRanges();
+		selection.addRange(range);
+		sL.element.focus();
+		changeCounterHeight();
+	}
+	
+	if(e.key=="Backspace"){
+		changeCounterHeight();
+	}
+	
 }
 
 function keyUp(e){
@@ -279,14 +323,19 @@ function keyUp(e){
 }
 
 function changeCounterHeight(){
-	if (fileDiv[selectedLine].element.scrollHeight!=0) {
-		numberDiv[selectedLine].remove_style("height");
-		numberDiv[selectedLine].add_style("height",fileDiv[selectedLine].element.scrollHeight+"px");
-	}else{
-		numberDiv[selectedLine].delete_element();
-		selectedLine--;
+	numberDiv[sL.id].remove_style("height");
+	numberDiv[sL.id].add_style("height",sL.element.scrollHeight+"px");
+	if (sL.element.scrollHeight==0) {
+		numberDiv[sL.id].delete_element();
+		sL.update("line"+sL.id--);
 	}
-	
+}
+
+function changeCounterHeightonResize(){
+	for (let i = 0; i < numberDiv.length; i++) {
+		numberDiv[i].remove_style("height");
+		numberDiv[i].add_style("height",fileDiv[i].element.scrollHeight+"px");
+	}
 }
 
 function input(){

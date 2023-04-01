@@ -65,7 +65,7 @@ body{
 }
 
  .filepath{
-    width: 20vw;
+    width: 99%;
     line-break: anywhere;
 }
 
@@ -75,7 +75,7 @@ body{
 } */
 
 .navigator{
-    width: 20vw;
+    width: 99%;
     margin-bottom: 20px;
 }
 
@@ -85,7 +85,7 @@ body{
 }
 
 .filelist{
-    width: 20vw;
+    width: 99%;
     line-break: anywhere;   
 }
 
@@ -135,7 +135,7 @@ body{
 
 .file{
     display: flex;
-    height: 86.4vh;
+    height: 92%;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -152,7 +152,7 @@ body{
 .number{
     margin-bottom: var(--marginbottom);
 }
-
+ 
 .filecontent{
     width: 100%;
     padding: 10px 0 0 5px;
@@ -167,7 +167,7 @@ body{
 }
 
 .contentline{
-    width: 99%;
+    width: 98%;
     margin-bottom: var(--marginbottom);
 }
 .contentline:hover{
