@@ -47,6 +47,9 @@ var upDiv=getElementbyID("up");
 var newDiv=getElementbyID("new");
 var saveDiv=getElementbyID("save");
 var deleteDiv=getElementbyID("delete");
+var newFileDiv=getElementbyID("newfile");
+var defaultNewFileText="Please enter the name of the new file."
+var newFileIcons='<img src="img/confirm.png" width="15px" height="15px"><img src="img/cancel.png" width="15px" height="15px">';
 
 var os="Other";
 var timerStart=0;
@@ -66,7 +69,12 @@ window.onload = () => {
 	fetch_call("getFolderContents",filePath);
 	rootDiv.addEventListener("click",openRoot);
 	upDiv.addEventListener("click",upFolder);
-	saveDiv.addEventListener("click",save);
+	newDiv.addEventListener("click",newFile);
+	saveDiv.addEventListener("click",saveFile);
+	deleteDiv.addEventListener("click",deleteFile);
+	newFileDiv.addEventListener("click",deleteNewfileText);
+	newFileDiv.addEventListener("keydown",enteronNewFile);
+	newFileDiv.addEventListener("blur",checkNewFileText);
 
 	filecontentDIV.addEventListener("keydown",keyPress);
 	filecontentDIV.addEventListener("keyup",keyUp);
@@ -247,7 +255,7 @@ function upFolder(){
 /**
  * Saves the file and clears the timer
  */
-function save(){
+function saveFile(){
 	clearInterval(timerInterval); timerInterval=null;
 	let empties;
 	for (let i = 0; i < fileDiv.length; i++) {
@@ -268,6 +276,33 @@ function save(){
 	let saveContent=filecontentDIV.innerText;
 	saveContent=saveContent.replaceAll("&nbsp;","%2B");
 	fetch_call("writeFile",saveContent);
+}
+
+function newFile(){
+	newFileDiv.innerHTML=defaultNewFileText+newFileIcons;
+	let newDivLocation=newDiv.getBoundingClientRect();
+	newFileDiv.style.top=newDivLocation.y+"px";
+	newFileDiv.style.display="block";
+	let newFileDivWidth=newFileDiv.getBoundingClientRect().width/2;
+	newFileDiv.style.left=(newDivLocation.x-newFileDivWidth)+"px";
+}
+
+function deleteNewfileText(){
+	newFileDiv.innerHTML="";
+}
+
+function enteronNewFile(e){
+	if(e.key=="Enter"){
+		e.preventDefault();
+	}
+}
+
+function checkNewFileText(){
+	if(newFileDiv.innerHTML=="") newFileDiv.innerHTML=defaultNewFileText;
+}
+
+function deleteFile(){
+
 }
 
 function editing(){

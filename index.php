@@ -44,6 +44,7 @@
 </div>
      
 <div id="footer" class="footer">3DShell.hu 2023 Adam Seller</div>
+<div id="newfile" class="newfile" contenteditable="true" role="textbox" spellcheck="false"></div>
 
 <script type="text/javascript" src="as.js" ></script>
 <script type="text/javascript" src="edit.js" ></script>
