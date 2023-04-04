@@ -22,8 +22,8 @@ const types = [
 class selectedLine{
 	update(line){
 		let id=line.split("line");
-		this.id=id[1]-1;
-		this.div=fileDiv[this.id];
+		this.id=id[1];
+		this.div=this.getLine(this.id);
 		this.element=this.div.element;
 		this.innerhtml=this.element.innerHTML;
 		this.innertext=this.element.innerText;
@@ -32,6 +32,12 @@ class selectedLine{
 	updateInner(){
 		this.innerhtml=this.element.innerHTML;
 		this.innertext=this.element.innerText;
+	}
+
+	getLine(id){
+		for (let i = 0; i < lines.length; i++) {
+			if(lines[i].id==id) return lines[i].line;
+		}
 	}
 }
 
@@ -47,16 +53,22 @@ var upDiv=getElementbyID("up");
 var newDiv=getElementbyID("new");
 var saveDiv=getElementbyID("save");
 var deleteDiv=getElementbyID("delete");
+var newFileContainerDiv=getElementbyID("newfilecontainer");
 var newFileDiv=getElementbyID("newfile");
+var newTooltipDiv=getElementbyID("newtooltip");
+var saveTooltipDiv=getElementbyID("savetooltip");
+var deleteTooltipDiv=getElementbyID("deletetooltip");
+var confirmDiv=getElementbyID("confirm");
+var cancelDiv=getElementbyID("cancel");
 var defaultNewFileText="Please enter the name of the new file."
-var newFileIcons='<img src="img/confirm.png" width="15px" height="15px"><img src="img/cancel.png" width="15px" height="15px">';
+var cssRoot=querySelect(':root');
+var cssComputedStyle=getComputedStyle(cssRoot);
 
 var os="Other";
 var timerStart=0;
 var timerInterval;
 var fileListDiv=[];
-var numberDiv=[];
-var fileDiv=[];
+var lines=[];
 var filecontent;
 
 var sL=new selectedLine();
@@ -72,13 +84,24 @@ window.onload = () => {
 	newDiv.addEventListener("click",newFile);
 	saveDiv.addEventListener("click",saveFile);
 	deleteDiv.addEventListener("click",deleteFile);
+	newDiv.addEventListener("mouseover",newTooltip);
+	saveDiv.addEventListener("mouseover",saveTooltip);
+	deleteDiv.addEventListener("mouseover",deleteTooltip);
+	newDiv.addEventListener("mouseleave",newTooltip);
+	saveDiv.addEventListener("mouseleave",saveTooltip);
+	deleteDiv.addEventListener("mouseleave",deleteTooltip);
 	newFileDiv.addEventListener("click",deleteNewfileText);
 	newFileDiv.addEventListener("keydown",enteronNewFile);
 	newFileDiv.addEventListener("blur",checkNewFileText);
+	confirmDiv.addEventListener("click",createFile);
+	cancelDiv.addEventListener("click",cancelNewfile);
 
 	filecontentDIV.addEventListener("keydown",keyPress);
 	filecontentDIV.addEventListener("keyup",keyUp);
 	filecontentDIV.addEventListener("input",input);
+
+	cssRoot.style.setProperty("--tooltipfade","1s");
+	cssRoot.style.setProperty("--tooltipdelay","1s");
 
 	if(changeHeightonResize.value) window.onresize = changeCounterHeightonResize;
 
@@ -94,8 +117,9 @@ window.onload = () => {
  * Runs operations on the server through php
  * @param {string} operation - Operation to run on the server
  * @param {string} argument - Argument to pass to the server
+ * @param {string} fileName - [optional] only used in creating a new file
  */
-async function fetch_call(operation,argument) {
+async function fetch_call(operation,argument,fileName) {
     let url='edit.php';	
     if(!argument) throw new Error("File name not received!");
 	let bod="to_run="+operation+"&argument="+argument;
@@ -115,6 +139,7 @@ async function fetch_call(operation,argument) {
 			if (operation=="read")writeContent(filecontent);
 			if (operation=="getFolderContents")writeFolder(filecontent);
 			if (operation=="writeFile") log(filecontent);
+			if (operation=="newFile") { log(filecontent); openFile(fileName); }
 		})
 }
 
@@ -125,30 +150,40 @@ function writeContent(file){
 	file=file.split("\n");
 	counterDIV.innerHTML="";
 	filecontentDIV.innerHTML="";
-	fileDiv=[]; numberDiv=[];
+	lines=[]; lines.push("Empty");
 	let empties=0;
 	for (let i = 1; i < file.length+1; i++) {
-		numberDiv.push(new eDiv("number"+i,counterDIV.id,i,"number"));
-		fileDiv.push(new eDiv("line"+i,filecontentDIV.id,"","contentline"));
+		let line = {
+			id:i,
+			number:new eDiv("number"+i,counterDIV.id,i,"number"),
+			line:new eDiv("line"+i,filecontentDIV.id,"","contentline"),
+		};
+		lines.push(line);
+		let _line=lines[i].line;
+		let _number=lines[i].number;
 		if (file[i-1].length==0) {
-			fileDiv[i-1].innerhtml("&nbsp;");
+			_line.innerhtml("&nbsp;");
 			empties++;
 		}else{
-			fileDiv[i-1].innertext(file[i-1]);
+			_line.innertext(file[i-1]);
 			empties=0;
 		}
-		fileDiv[i-1].add_event("click",editing);
-		numberDiv[i-1].add_style("height",fileDiv[i-1].element.scrollHeight+"px");
+		_line.add_event("click",editing);
+		_number.add_style("height",_line.element.scrollHeight+"px");
 	}
 	if (empties<10) {
 		let emptyLines=addedEmptylines.value+file.length;
 		for (let i = file.length+1; i < emptyLines; i++) {
-			numberDiv.push(new eDiv("number"+i,counterDIV.id,i,"number"));
-			fileDiv.push(new eDiv("line"+i,filecontentDIV.id,"&nbsp;","contentline"));
-			fileDiv[fileDiv.length-1].add_event("click",editing);
+			let line = {
+				id:i,
+				number:new eDiv("number"+i,counterDIV.id,i,"number"),
+				line:new eDiv("line"+i,filecontentDIV.id,"&nbsp;","contentline"),
+			};
+			lines.push(line)
+			lines[lines.length-1].line.add_event("click",editing);
 		}
 	}
-	counterDIV.style.height=filecontentDIV.scrollHeight+"px";
+	cssRoot.style.setProperty("--counterheight",filecontentDIV.scrollHeight+"px")
 }
 
 /**
@@ -258,8 +293,15 @@ function upFolder(){
 function saveFile(){
 	clearInterval(timerInterval); timerInterval=null;
 	let empties;
-	for (let i = 0; i < fileDiv.length; i++) {
-		let line=fileDiv[i].element;
+	// for (let i = 0; i < fileDiv.length; i++) {
+	// 	log("# "+i+" : "+fileDiv[i].element.scrollHeight);
+	// 	if (fileDiv[i].element.scrollHeight==0) {
+	// 		numberDiv[i].delete_element();
+	// 		fileDiv.splice(i,1);
+	// 	}
+	// }
+	for (let i = 0; i < lines.length; i++) {
+		let line=lines[i].line.element;
 		if (line.innerHTML=="&nbsp;") {
 			empties++;
 		}else{
@@ -270,7 +312,7 @@ function saveFile(){
 	if (empties>5) {
 		empties-=5;
 		for (let i = 0; i < empties; i++) {
-			fileDiv[fileDiv.length-empties+i].delete_element();
+			lines[lines.length-empties+i].line.delete_element();
 		}
 	}
 	let saveContent=filecontentDIV.innerText;
@@ -279,12 +321,13 @@ function saveFile(){
 }
 
 function newFile(){
-	newFileDiv.innerHTML=defaultNewFileText+newFileIcons;
 	let newDivLocation=newDiv.getBoundingClientRect();
-	newFileDiv.style.top=newDivLocation.y+"px";
-	newFileDiv.style.display="block";
-	let newFileDivWidth=newFileDiv.getBoundingClientRect().width/2;
-	newFileDiv.style.left=(newDivLocation.x-newFileDivWidth)+"px";
+	cssRoot.style.setProperty("--newfiletop",newDivLocation.y+"px");
+	cssRoot.style.setProperty("--newfileleft",newDivLocation.x-350/2+"px");
+	cssRoot.style.setProperty("--newfilevisibility","visible");
+	cssRoot.style.setProperty("--newfilewidth","350px");
+	newFileContainerDiv.style.opacity="1";
+	newFileDiv.innerHTML=defaultNewFileText;
 }
 
 function deleteNewfileText(){
@@ -299,6 +342,27 @@ function enteronNewFile(e){
 
 function checkNewFileText(){
 	if(newFileDiv.innerHTML=="") newFileDiv.innerHTML=defaultNewFileText;
+}
+
+function createFile(){
+	let fileName=newFileDiv.innerHTML.split(".");
+	if(fileName.length==1) throw new Error("No file extension received!");
+	let fileExtension=fileName[fileName.length-1];
+	let validExtension=false;
+	for (let i = 0; i < types.length; i++) {
+		if(fileExtension==types[i]) validExtension=true;
+	}
+	if(validExtension){
+		fetch_call("newFile",newFileDiv.innerText,newFileDiv.innerText);
+		cancelNewfile();
+	}else{
+		throw new Error("No valid file extension received!")
+	}
+}
+
+function cancelNewfile(){
+	cssRoot.style.setProperty("--newfilewidth","0px");
+	newFileContainerDiv.style.opacity="0";
 }
 
 function deleteFile(){
@@ -358,21 +422,60 @@ function keyUp(e){
 }
 
 function changeCounterHeight(){
-	numberDiv[sL.id].remove_style("height");
-	numberDiv[sL.id].add_style("height",sL.element.scrollHeight+"px");
+	lines[sL.id].number.remove_style("height");
+	lines[sL.id].number.add_style("height",sL.element.scrollHeight+"px");
 	if (sL.element.scrollHeight==0) {
-		numberDiv[sL.id].delete_element();
-		sL.update("line"+sL.id--);
+		lines[sL.id].number.delete_element();
+		for (let i = 0; i < lines.length; i++) {
+			if(lines[i].id==sL.id) lines.splice(i,1);
+		}
+		sL.update("line"+--sL.id);
 	}
 }
 
 function changeCounterHeightonResize(){
-	for (let i = 0; i < numberDiv.length; i++) {
-		numberDiv[i].remove_style("height");
-		numberDiv[i].add_style("height",fileDiv[i].element.scrollHeight+"px");
+	for (let i = 0; i < lines.length; i++) {
+		lines[i].number.remove_style("height");
+		lines[i].number.add_style("height",fileDiv[i].element.scrollHeight+"px");
 	}
 }
 
 function input(){
 	changeCounterHeight();
+}
+
+function newTooltip(e){
+	if(e.type=="mouseover"){
+		newTooltipDiv.style.top="-17px";
+		newTooltipDiv.style.right="-10px";
+		cssRoot.style.setProperty("--tooltipdelay","1s");
+		cssRoot.style.setProperty("--newvisibility","visible");
+	}else{
+		cssRoot.style.setProperty("--newvisibility","hidden");
+		cssRoot.style.setProperty("--tooltipdelay","0s");
+	}
+}
+
+function saveTooltip(e){
+	if(e.type=="mouseover"){
+		saveTooltipDiv.style.top="-17px";
+		saveTooltipDiv.style.right="-5px";
+		cssRoot.style.setProperty("--tooltipdelay","1s");
+		cssRoot.style.setProperty("--savevisibility","visible");
+	}else{
+		cssRoot.style.setProperty("--savevisibility","hidden");
+		cssRoot.style.setProperty("--tooltipdelay","0s");
+	}
+}
+
+function deleteTooltip(e){
+	if(e.type=="mouseover"){
+		deleteTooltipDiv.style.top="-17px";
+		deleteTooltipDiv.style.right="-30px";
+		cssRoot.style.setProperty("--tooltipdelay","1s");
+		cssRoot.style.setProperty("--deletevisibility","visible");
+	}else{
+		cssRoot.style.setProperty("--deletevisibility","hidden");
+		cssRoot.style.setProperty("--tooltipdelay","0s");
+	}
 }

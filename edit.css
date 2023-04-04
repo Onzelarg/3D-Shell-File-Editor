@@ -17,11 +17,19 @@
     --tabsize:8;
 
     --newfilebg:linear-gradient(#90517f,#683b5c);
-    --newfiledisplay:none;
-    --newfiletop:0px;
-    --newfileleft:0px;
-}
+    --newfilevisibility:hidden;
+    --newfiletop:100px;
+    --newfileleft:100px;
+    --newfilewidth:0px;
 
+    --tooltipbg:linear-gradient(#90517fea,#683b5cea);
+    --tooltipfade:0s;
+    --tooltipdelay:0s;
+    --newvisibility:hidden;
+    --savevisibility:hidden;
+    --deletevisibility:hidden;
+}
+ 
 
 /*BAEBFF A79AB2 B57BA6 415A77 79CD7F */
 
@@ -146,6 +154,10 @@ body{
     margin: 0 2px 0 2px;
     cursor: pointer;
 }
+.icon:hover .tooltip{
+    visibility: visible;
+    opacity: 1;
+}
 
 .file{
     display: flex;
@@ -199,19 +211,57 @@ body{
     background-color: #A79AB2;
 }
 
-.newfile{
+.newfilecontainer{
     background: var(--newfilebg);
     position: absolute;
     top: var(--newfiletop);
     left: var(--newfileleft);
     padding: 4px 8px 4px 8px;
-    width: 350px;  
+    width: var(--newfilewidth);  
+    height: 20px;
+    overflow: hidden;
     font-family: var(--contentfont);
     border: 1px solid #41253a;
     border-radius: 20px;
-    display: var(--newfiledisplay);
+    display: flex;
+    visibility: var(--newfilevisibility);
+    opacity: 0;
+    transition: opacity 2s , width 2s;
     box-shadow: 0 0 16px 2px rgb(0 0 0 / 40%);
+}
+.newfilecontainer:focus{
+    outline: none;
+}
+
+.newfile{
+    width: 90%;
+    margin: 0 0 0 10px;
 }
 .newfile:focus{
     outline: none;
+}
+
+.tooltip{
+    position: absolute;
+    z-index: 1;
+    background: var(--tooltipbg);
+    border: 1px solid #41253a;
+    border-radius: 10px;
+    font-size: 12pt;
+    padding: 3px;
+    box-shadow: 0 0 16px 2px rgb(0 0 0 / 40%);
+    opacity: 0;
+    transition: opacity var(--tooltipfade) ease var(--tooltipdelay);
+}
+
+.newtooltip{
+    display: var(--newvisibility);
+}
+
+.savetooltip{
+    display: var(--savevisibility);
+}
+
+.deletetooltip{
+    display: var(--deletevisibility);
 }

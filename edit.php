@@ -16,6 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		if($_POST['to_run']=="getFolderContents") getFolderContents($_POST['argument']);
 		if($_POST['to_run']=="read") read();
 		if($_POST['to_run']=="writeFile") writeFile();
+		if($_POST['to_run']=="newFile") newFile();
 	}
 }
 
@@ -67,7 +68,14 @@ function writeFile(){
 	file_put_contents($fileName.".old",$oldFile);
 	$content = $_POST["argument"];
 	file_put_contents($fileName,$content);
-	print "Success";
+	print "File saved successfully";
+}
+
+function newFile(){
+	if(!$_POST["argument"]){throw new Exception("Filename not received!");}
+	$fileName=$GLOBALS["root"].$_COOKIE["openedFolder"].$_POST["argument"];
+	file_put_contents($fileName,"");
+	print "File created succesfully";
 }
 
 ?>
