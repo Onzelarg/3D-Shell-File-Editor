@@ -2,7 +2,9 @@
 //													Constants
 const timerUpdateTick={ value:15000, } //15s
 const addedEmptylines={ value:10, }
+const addEmptylines={ value:5, }
 const changeHeightonResize={ value:false, }
+const changeHeightTimer={ value:2000, }
 // ********************************************************************************************************
 
 // ********************************************************************************************************
@@ -19,9 +21,24 @@ const types = [
 ];
 // ********************************************************************************************************
 
+//new eDiv(id,parent,string,class)
+class contentLine{
+
+	constructor(id,parent){
+		this.id=id;
+		this.lineDiv=new eDiv("line"+id,parent,"","line");
+		let thisLine="line"+id;
+		this.counterDiv=new eDiv("counter"+id,thisLine,id,"counter");
+		this.counterDiv.add_attribute("contenteditable","false");
+		this.contentDiv=new eDiv("content"+id,thisLine,"","filecontent");
+	}
+
+
+
+}
 class selectedLine{
 	update(line){
-		let id=line.split("line");
+		let id=line.split("content");
 		this.id=id[1];
 		this.div=this.getLine(this.id);
 		this.element=this.div.element;
@@ -36,13 +53,15 @@ class selectedLine{
 
 	getLine(id){
 		for (let i = 0; i < lines.length; i++) {
-			if(lines[i].id==id) return lines[i].line;
+			if(lines[i].id==id) return lines[i].contentDiv;
 		}
 	}
 }
 
-var counterDIV=getElementbyID("counter");
-var filecontentDIV=getElementbyID("filecontent");
+//var counterDIV=getElementbyID("counter");
+//var filecontentDIV=getElementbyID("filecontent");
+
+var fileDiv=getElementbyID("file");
 var filepathDIV=getElementbyID("filepath");
 var filePath=filepathDIV.innerHTML;
 var fileList=getElementbyID("filelist");
@@ -63,6 +82,7 @@ var cancelDiv=getElementbyID("cancel");
 var defaultNewFileText="Please enter the name of the new file."
 var cssRoot=querySelect(':root');
 var cssComputedStyle=getComputedStyle(cssRoot);
+var changeHeightTimeout;
 
 var os="Other";
 var timerStart=0;
@@ -77,7 +97,7 @@ var multiKey="";
 window.onload = () => {
 	os=navigator.userAgent.toLowerCase();
 	if(os.includes("mac")) os="Mac";
-	if(os.includes("Win")) os="Win";
+	if(os.includes("win")) os="Win";
 	fetch_call("getFolderContents",filePath);
 	rootDiv.addEventListener("click",openRoot);
 	upDiv.addEventListener("click",upFolder);
@@ -96,21 +116,23 @@ window.onload = () => {
 	confirmDiv.addEventListener("click",createFile);
 	cancelDiv.addEventListener("click",cancelNewfile);
 
-	filecontentDIV.addEventListener("keydown",keyPress);
-	filecontentDIV.addEventListener("keyup",keyUp);
-	filecontentDIV.addEventListener("input",input);
+	//filecontentDIV.addEventListener("keydown",keyPress);
+	//filecontentDIV.addEventListener("keyup",keyUp);
+	//filecontentDIV.addEventListener("input",input);
 
 	cssRoot.style.setProperty("--tooltipfade","1s");
 	cssRoot.style.setProperty("--tooltipdelay","1s");
+	if(os=="Win") cssRoot.style.setProperty("--contentfont","'Quicksand', sans-serif");
 
-	if(changeHeightonResize.value) window.onresize = changeCounterHeightonResize;
+	if(changeHeightonResize.value) window.addEventListener("resize",callHeightChange);
 
 	if (currentFileDiv.innerHTML=="#$#") {
 		currentFileDiv.innerHTML="No file opened";
 	}else{
-		filecontentDIV.innerHTML="Opening file ...";
+		fileDiv.innerHTML="Opening file ...";
 		openFile(currentFileDiv.innerHTML);
 	}
+	cClear();
 };
 
 /**
@@ -148,42 +170,45 @@ async function fetch_call(operation,argument,fileName) {
  */
 function writeContent(file){
 	file=file.split("\n");
-	counterDIV.innerHTML="";
-	filecontentDIV.innerHTML="";
+	fileDiv.innerHTML="";
+	// counterDIV.innerHTML="";
+	// filecontentDIV.innerHTML="";
 	lines=[]; lines.push("Empty");
 	let empties=0;
 	for (let i = 1; i < file.length+1; i++) {
-		let line = {
-			id:i,
-			number:new eDiv("number"+i,counterDIV.id,i,"number"),
-			line:new eDiv("line"+i,filecontentDIV.id,"","contentline"),
-		};
+		// let line = {
+		// 	id:i,
+		// 	number:new eDiv("number"+i,counterDIV.id,i,"number"),
+		// 	line:new eDiv("line"+i,filecontentDIV.id,"","contentline"),
+		// };
+		let line=new contentLine(i,"file");
 		lines.push(line);
-		let _line=lines[i].line;
-		let _number=lines[i].number;
+		// let _line=lines[i].line;
+		// let _number=lines[i].number;
 		if (file[i-1].length==0) {
-			_line.innerhtml("&nbsp;");
+			lines[i].contentDiv.innerhtml("&nbsp;");
 			empties++;
 		}else{
-			_line.innertext(file[i-1]);
+			lines[i].contentDiv.innertext(file[i-1]);
 			empties=0;
 		}
-		_line.add_event("click",editing);
-		_number.add_style("height",_line.element.scrollHeight+"px");
+		lines[i].contentDiv.add_event("click",editing);
+		//_number.add_style("height",_line.element.scrollHeight+"px");
 	}
 	if (empties<10) {
 		let emptyLines=addedEmptylines.value+file.length;
 		for (let i = file.length+1; i < emptyLines; i++) {
-			let line = {
-				id:i,
-				number:new eDiv("number"+i,counterDIV.id,i,"number"),
-				line:new eDiv("line"+i,filecontentDIV.id,"&nbsp;","contentline"),
-			};
+			// let line = {
+			// 	id:i,
+			// 	number:new eDiv("number"+i,counterDIV.id,i,"number"),
+			// 	line:new eDiv("line"+i,filecontentDIV.id,"&nbsp;","contentline"),
+			// };
+			let line=new contentLine(i,"file");
 			lines.push(line)
-			lines[lines.length-1].line.add_event("click",editing);
+			lines[lines.length-1].contentDiv.add_event("click",editing);
 		}
 	}
-	cssRoot.style.setProperty("--counterheight",filecontentDIV.scrollHeight+"px")
+	//cssRoot.style.setProperty("--counterheight",filecontentDIV.scrollHeight+"px")
 }
 
 /**
@@ -239,8 +264,7 @@ function openFile(fileName){
  */
 function clearOpenedFile(){
 	currentFileDiv.innerHTML="No file opened";
-	filecontentDIV.innerHTML="";
-	counterDIV.innerHTML="";
+	fileDiv.innerHTML="";
 }
 
 /**
@@ -293,29 +317,23 @@ function upFolder(){
 function saveFile(){
 	clearInterval(timerInterval); timerInterval=null;
 	let empties;
-	// for (let i = 0; i < fileDiv.length; i++) {
-	// 	log("# "+i+" : "+fileDiv[i].element.scrollHeight);
-	// 	if (fileDiv[i].element.scrollHeight==0) {
-	// 		numberDiv[i].delete_element();
-	// 		fileDiv.splice(i,1);
-	// 	}
-	// }
-	for (let i = 0; i < lines.length; i++) {
-		let line=lines[i].line.element;
+	let saveContent="";
+	for (let i = 1; i < lines.length; i++) {
+		let line=lines[i].contentDiv.element;
 		if (line.innerHTML=="&nbsp;") {
 			empties++;
 		}else{
 			empties=0;
 		}
 		line.innerHTML=line.innerHTML.replaceAll("&nbsp;","<br>");
+		saveContent+=line.innerText;
 	}
-	if (empties>5) {
-		empties-=5;
+	if (empties>addEmptylines.value) {
+		empties-=addEmptylines.value;
 		for (let i = 0; i < empties; i++) {
-			lines[lines.length-empties+i].line.delete_element();
+			lines[lines.length-empties+i].lineDiv.delete_element();
 		}
 	}
-	let saveContent=filecontentDIV.innerText;
 	saveContent=saveContent.replaceAll("&nbsp;","%2B");
 	fetch_call("writeFile",saveContent);
 }
@@ -426,18 +444,21 @@ function changeCounterHeight(){
 	lines[sL.id].number.add_style("height",sL.element.scrollHeight+"px");
 	if (sL.element.scrollHeight==0) {
 		lines[sL.id].number.delete_element();
-		for (let i = 0; i < lines.length; i++) {
+		for (let i = 1; i < lines.length; i++) {
 			if(lines[i].id==sL.id) lines.splice(i,1);
 		}
 		sL.update("line"+--sL.id);
 	}
 }
 
-function changeCounterHeightonResize(){
-	for (let i = 0; i < lines.length; i++) {
+function callHeightChange(){ changeHeightTimeout=setTimeout(changeCounterHeightonResize, changeHeightTimer.value); }
+
+async function changeCounterHeightonResize(){
+	for (let i = 1; i < lines.length; i++) {
 		lines[i].number.remove_style("height");
-		lines[i].number.add_style("height",fileDiv[i].element.scrollHeight+"px");
+		lines[i].number.add_style("height",lines[i].line.element.scrollHeight+"px");
 	}
+	clearTimeout(changeHeightTimeout);
 }
 
 function input(){

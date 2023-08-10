@@ -160,44 +160,39 @@ body{
 }
 
 .file{
-    display: flex;
     height: 92%;
     overflow-y: auto;
     overflow-x: hidden;
+}
+.file:focus{
+    outline: none;
+}
+
+.line{
+    display: flex;
+}
+.line:hover{
+    background-color: #415A7770;
 }
 
 .counter{
     height: var(--counterheight);
     text-align: end;
-    width: 45px;
-    padding: 10px 10px 0 5px;
-    border-right: #7B7B7B 1px solid;
+    width: 55px;
+    padding: 3px 10px 3px 5px;
     font-size: var(--fontsize);
 }
 
-.number{
-    margin-bottom: var(--marginbottom);
-}
- 
 .filecontent{
     width: 100%;
-    padding: 10px 0 0 5px;
+    padding: 3px 0 3px 5px;
     margin-left: 5px;
     user-select: none;
     tab-size: var(--tabsize);
     white-space: break-spaces;
     font-size: var(--fontsize);
-}
-.filecontent:focus{
-    outline: none;
-}
-
-.contentline{
-    width: 98%;
-    margin-bottom: var(--marginbottom);
-}
-.contentline:hover{
-    background-color: #415A7770;
+    border-left: #7B7B7B 1px solid;
+    overflow: auto;
 }
 
 .footer{

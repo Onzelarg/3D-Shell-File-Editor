@@ -30,7 +30,7 @@
         <div id="filebar" class="filebar">
             <div id="timer" class="timer">&nbsp;</div>
                 <div id="icons" class="icons">
-                    <div id="new" class="icon">
+                    <div id="new" class="icon newicon">
                         <img src="img/new.png" width="20px" height="20px">
                         <span id="newtooltip" class="tooltip newtooltip">Create a new file</span>
                     </div>
@@ -45,9 +45,52 @@
                 </div>
             <div id="currentfile" class="currentfile"><?php if(isset($_COOKIE["openedFile"])==1) { print $_COOKIE["openedFile"];}else{ print "#$#";} ?></div>     
         </div>
-        <div id="file" class="file">
-            <div id="counter" class="counter"></div>
-            <div id="filecontent" class="filecontent" contenteditable="true" role="textbox" spellcheck="false">No open file</div>
+        <div id="file" class="file" contenteditable="true" role="textbox" spellcheck="false">
+
+            <div id="line1" class="line">
+                <div id="counter" class="counter" contenteditable="false" >1</div>
+                <div id="content" class="filecontent">.inp { width: 25px; border-radius: 5px;</div>
+            </div>
+            <div id="line2" class="line">
+                <div id="counter" class="counter">2</div>
+                <div id="content" class="filecontent">}</div>
+            </div>
+            <div id="line3" class="line">
+                <div id="counter" class="counter">3</div>
+                <div id="content" class="filecontent">.maze{ float:left;</div>
+            </div>
+            <div id="line4" class="line">
+                <div id="counter" class="counter">4</div>
+                <div id="content" class="filecontent">}</div>
+            </div>
+            <div id="line5" class="line">
+                <div id="counter" class="counter">5</div>
+                <div id="content" class="filecontent">.maze_tb{ float: left;</div>
+            </div>
+            <div id="line6" class="line">
+                <div id="counter" class="counter">6</div>
+                <div id="content" class="filecontent">}</div>
+            </div>
+            <div id="line7" class="line">
+                <div id="counter" class="counter">7</div>
+                <div id="content" class="filecontent">.load{ position: absolute; height: 20px; left: 7px; top: 550px; width: </div>
+            </div>
+            <div id="line8" class="line">
+                <div id="counter" class="counter">8</div>
+                <div id="content" class="filecontent">500px; border: black 1px solid; text-align: center;</div>
+            </div>
+            <div id="line9" class="line">
+                <div id="counter" class="counter">9</div>
+                <div id="content" class="filecontent">}</div>
+            </div>
+            <div id="line10" class="line">
+                <div id="counter" class="counter">10</div>
+                <div id="content" class="filecontent">.loadc{ position: absolute; left: 7px; top: 580px; display: none;</div>
+            </div>
+            <!--
+                <div id="counter" class="counter"></div>
+            <div id="filecontent" class="filecontent" contenteditable="true" role="textbox" spellcheck="false"></div>
+            -->
         </div>
     </div> 
 </div>
@@ -64,3 +107,4 @@
 <script type="text/javascript" src="edit.js" ></script>
 </body>
 </html>
+
